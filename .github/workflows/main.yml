@@ -41,7 +41,7 @@ jobs:
           if (!release) {
             throw new Error(`Release not found for tag ${context.payload.release.tag_name}`);
           }
-          return { upload_url: release.upload_url };
+          core.setOutput('upload_url', release.upload_url);
 
     - name: Upload release assets
       uses: actions/upload-release-asset@v1
