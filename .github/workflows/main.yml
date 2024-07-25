@@ -26,6 +26,12 @@ jobs:
     - name: List generated zip files
       run: ls -l *.tar.gz
 
+    - name: Generate MD5 sums
+      run: |
+        touch md5sums.txt
+        for file in $(find soundpacks -type f); do
+          md5sum "$file" >> md5sums.txt
+        done
 
     - name: Upload binaries to release
       uses: svenstaro/upload-release-action@v2
@@ -35,3 +41,34 @@ jobs:
         tag: ${{ github.event.release.tag_name }}
         overwrite: true
         file_glob: true
+
+    - name: Upload MD5 sums to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: "md5sums.txt"
+        tag: ${{ github.event.release.tag_name }}
+        overwrite: true
+
+    - name: Append MD5 sums to release body
+      id: get_release
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const { data: release } = await github.repos.getReleaseByTag({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            tag: context.payload.release.tag_name,
+          });
+
+          const fs = require('fs');
+          const md5sums = fs.readFileSync('md5sums.txt', 'utf8');
+          
+          const newBody = `${release.body}\n\n### MD5 Sums\n\`\`\`\n${md5sums}\n\`\`\``;
+
+          await github.repos.updateRelease({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            release_id: release.id,
+            body: newBody,
+          });
