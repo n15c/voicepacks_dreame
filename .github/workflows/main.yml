@@ -17,14 +17,15 @@ jobs:
 
     - name: Create zip files for each soundpack
       run: |
+        mkdir -p zips
         for dir in soundpacks/*; do
           if [ -d "$dir" ]; then
-            zip -r "${dir##*/}.zip" "$dir"
+            zip -r "zips/$(basename "$dir").zip" "$dir"
           fi
         done
 
     - name: List generated zip files
-      run: ls -l *.zip
+      run: ls -l zips
 
     - name: Get release upload URL
       id: get_release_upload_url
@@ -40,14 +41,14 @@ jobs:
           if (!release) {
             throw new Error(`Release not found for tag ${context.payload.release.tag_name}`);
           }
-          return release.upload_url;
+          return { upload_url: release.upload_url };
 
     - name: Upload release assets
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.get_release_upload_url.outputs.result }}
-        asset_path: '*.zip'
+        upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
+        asset_path: zips/*.zip
         asset_name: soundpack-zips
         asset_content_type: application/zip
