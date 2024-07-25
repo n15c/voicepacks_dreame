@@ -19,7 +19,7 @@ jobs:
       run: |
         for dir in soundpacks/*; do
           if [ -d "$dir" ]; then
-            tar -czvf "${dir##*/}.tar.gz" --directory="$dir/output" *.ogg
+            tar -czvf "${dir##*/}.tar.gz" --directory="$dir/output" *
           fi
         done
 
