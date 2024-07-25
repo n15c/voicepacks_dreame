@@ -19,7 +19,7 @@ jobs:
       run: |
         for dir in soundpacks/*; do
           if [ -d "$dir" ]; then
-            zip -j "${dir##*/}.zip" "$dir"/*.ogg
+            zip -j "${dir##*/}.zip" "$dir"/output/*.ogg
           fi
         done
 
