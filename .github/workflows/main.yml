@@ -1,0 +1,51 @@
+name: Create and Attach Soundpack Zips
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  zip_and_attach:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up zip utility
+      run: sudo apt-get install tar
+
+    - name: Create zip files for each soundpack
+      run: |
+        for dir in soundpacks/*; do
+          if [ -d "$dir" ]; then
+            tar -czvf "${dir##*/}.tar.gz" "$dir"/output/*.ogg
+          fi
+        done
+
+    - name: List generated zip files
+      run: ls -l *.tar.gz
+
+    - name: Generate MD5 sums for tar.gz files
+      run: |
+        touch md5sums.txt
+        for file in *.tar.gz; do
+          md5sum "$file" >> md5sums.txt
+        done
+
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: "*.tar.gz"
+        tag: ${{ github.event.release.tag_name }}
+        overwrite: true
+        file_glob: true
+
+    - name: Upload MD5 sums to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: "md5sums.txt"
+        tag: ${{ github.event.release.tag_name }}
+        overwrite: true
