@@ -50,25 +50,37 @@ jobs:
         tag: ${{ github.event.release.tag_name }}
         overwrite: true
 
-    - name: Append MD5 sums to release body
+    - name: Get release ID
       id: get_release
       uses: actions/github-script@v6
       with:
         script: |
-          const { data: release } = await github.repos.getReleaseByTag({
+          const release = await github.repos.getReleaseByTag({
             owner: context.repo.owner,
             repo: context.repo.repo,
             tag: context.payload.release.tag_name,
           });
+          return { release_id: release.data.id };
 
+    - name: Append MD5 sums to release body
+      uses: actions/github-script@v6
+      with:
+        script: |
           const fs = require('fs');
           const md5sums = fs.readFileSync('md5sums.txt', 'utf8');
-          
+
+          const release_id = core.getInput('get_release.release_id');
+          const { data: release } = await github.repos.getRelease({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            release_id: release_id,
+          });
+
           const newBody = `${release.body}\n\n### MD5 Sums\n\`\`\`\n${md5sums}\n\`\`\``;
 
           await github.repos.updateRelease({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            release_id: release.id,
+            release_id: release_id,
             body: newBody,
           });
