@@ -26,8 +26,8 @@ jobs:
     - name: List generated zip files
       run: ls -l *.zip
 
-    - name: Get release ID
-      id: get_release
+    - name: Get release upload URL
+      id: get_release_upload_url
       uses: actions/github-script@v6
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -40,14 +40,14 @@ jobs:
           if (!release) {
             throw new Error(`Release not found for tag ${context.payload.release.tag_name}`);
           }
-          return release.id;
+          return release.upload_url;
 
     - name: Upload release assets
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.get_release.outputs.upload_url }}
+        upload_url: ${{ steps.get_release_upload_url.outputs.result }}
         asset_path: '*.zip'
         asset_name: soundpack-zips
         asset_content_type: application/zip
