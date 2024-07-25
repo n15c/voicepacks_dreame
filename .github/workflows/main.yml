@@ -17,38 +17,38 @@ jobs:
 
     - name: Create zip files for each soundpack
       run: |
-        mkdir -p zips
         for dir in soundpacks/*; do
           if [ -d "$dir" ]; then
-            zip -r "zips/$(basename "$dir").zip" "$dir"
+            zip -r "${dir##*/}.zip" "$dir"
           fi
         done
 
     - name: List generated zip files
-      run: ls -l zips
+      run: ls -l *.zip
 
-    - name: Get release upload URL
-      id: get_release_upload_url
-      uses: actions/github-script@v6
+    - name: Upload zip files as artifacts
+      uses: actions/upload-artifact@v3
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          const { data: releases } = await github.rest.repos.listReleases({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-          });
-          const release = releases.find(r => r.tag_name === context.payload.release.tag_name);
-          if (!release) {
-            throw new Error(`Release not found for tag ${context.payload.release.tag_name}`);
-          }
-          core.setOutput('upload_url', release.upload_url);
+        name: soundpack-zips
+        path: '*.zip'
 
-    - name: Upload release assets
-      uses: actions/upload-release-asset@v1
+    - name: Create a release to attach files to
+      id: create_release
+      uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.get_release_upload_url.outputs.upload_url }}
-        asset_path: zips/*.zip
-        asset_name: soundpack-zips
-        asset_content_type: application/zip
+        tag_name: ${{ github.event.release.tag_name }}
+        release_name: ${{ github.event.release.name }}
+        body: ${{ github.event.release.body }}
+        draft: false
+        prerelease: false
+
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        file: "*.zip"
+        tag: ${{ github.event.release.tag_name }}
+        overwrite: true
+        file_glob: true
