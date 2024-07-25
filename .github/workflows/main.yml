@@ -26,10 +26,10 @@ jobs:
     - name: List generated zip files
       run: ls -l *.tar.gz
 
-    - name: Generate MD5 sums
+    - name: Generate MD5 sums for tar.gz files
       run: |
         touch md5sums.txt
-        for file in $(find soundpacks -type f); do
+        for file in *.tar.gz; do
           md5sum "$file" >> md5sums.txt
         done
 
@@ -49,18 +49,6 @@ jobs:
         file: "md5sums.txt"
         tag: ${{ github.event.release.tag_name }}
         overwrite: true
-
-    - name: Get release ID
-      id: get_release
-      uses: actions/github-script@v6
-      with:
-        script: |
-          const release = await github.repos.getReleaseByTag({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            tag: context.payload.release.tag_name,
-          });
-          return { release_id: release.data.id };
 
     - name: Append MD5 sums to release body
       uses: actions/github-script@v6
