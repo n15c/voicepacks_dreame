@@ -10,6 +10,7 @@ Welcome to the Dreame Vacuum Cleaner Soundpacks and Scripts repository! This rep
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
+- [Filenames](#filenames)
 
 ## Soundpacks
 
