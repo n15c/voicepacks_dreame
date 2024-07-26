@@ -86,13 +86,15 @@ We welcome contributions to this repository! If you have a new soundpack or a us
    ```
 5. Open a pull request.
 
-## License
+## Other Stuff
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+The csv was stolen from [ccoors](https://raw.githubusercontent.com/ccoors/dreame_voice_packs/main/sound_list.csv)
+
 
 ---
 
 Enjoy customizing your Dreame vacuum cleaner with new sounds and scripts!
+
 
 
 ## Filenames
