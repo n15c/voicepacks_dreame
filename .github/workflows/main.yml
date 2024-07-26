@@ -12,14 +12,18 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up zip utility
+    - name: Set up tar utility
       run: sudo apt-get install tar
 
-    - name: Create zip files for each soundpack
+    - name: Create archive files for each soundpack
       run: |
+        ROOTPTH=$(pwd)
         for dir in soundpacks/*; do
           if [ -d "$dir" ]; then
-            tar -czvf "${dir##*/}.tar.gz" --directory="$dir/output" *
+            cd $dir/output
+            tar -czvf "${dir##*/}.tar.gz" *
+            mv "${dir##*/}.tar.gz" $ROOTPTH
+            cd $ROOTPTH
           fi
         done
 
