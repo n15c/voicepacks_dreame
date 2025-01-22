@@ -60,10 +60,10 @@ python CreateSoundFromYoutube.py [-h] --youtube_url YOUTUBE_URL --soundpack SOUN
 1. Get the URL of the wanted soundpack: 
 [GlaDOS Pack](https://github.com/n15c/voicepacks_dreame/releases/latest/download/glados.tar.gz)
 [Meme Soundpack](https://github.com/n15c/voicepacks_dreame/releases/latest/download/memes.tar.gz)
-[R2D2 Soundpack](https://github.com/n15c/voicepacks_dreame/releases/download/v0.1/r2d2.tar.gz)
-[Original Sounds](https://github.com/n15c/voicepacks_dreame/releases/download/v0.1/original-en.tar.gz)
+[R2D2 Soundpack](https://github.com/n15c/voicepacks_dreame/releases/latest/download/r2d2.tar.gz)
+[Original Sounds](https://github.com/n15c/voicepacks_dreame/releases/latest/download/original-en.tar.gz)
 
-2. Get the corresponding MD5 hash of this file, either by using this [file](https://github.com/n15c/voicepacks_dreame/releases/download/v0.1/md5sums.txt) or calculate it by yourself
+2. Get the corresponding MD5 hash of this file, either by using this [file](https://github.com/n15c/voicepacks_dreame/releases/latest/download/md5sums.txt) or calculate it by yourself
 3. Go to your Valetudo page <IP/HOSTNAME>/#/options/robot/misc
 4. Write down the data (the language code can be chosen by you, just don't use an official language like DE, EN, ...)
 
